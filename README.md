@@ -1,3 +1,6 @@
-# MNIST Classifier
+# Sequential CNN for Digit Recognition
 
-Code will be pushed upon project's completion.
+CNN-based classifier for [Digit Recognizer Competition](https://www.kaggle.com/c/digit-recognizer).
+
+To achieve higher accuracy, change `epoch` to 30.
+
