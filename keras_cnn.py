@@ -38,10 +38,13 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import ReduceLROnPlateau
 from keras.utils.np_utils import to_categorical # for one-hot-encoding
 
+from google.colab import drive
+drive.mount("/drive")
+
 """## Data Preparation"""
 
 # Loading datasets
-train, test = pd.read_csv("input/train.csv"), pd.read_csv("input/test.csv")
+train, test = pd.read_csv("/drive/My Drive/input/train.csv"), pd.read_csv("/drive/My Drive/input/test.csv")
 
 y_train = train["label"]
 
@@ -174,6 +177,9 @@ history = model.fit(datagen.flow(X_train, y_train, batch_size = batch_size),
                     verbose = 2, steps_per_epoch = X_train.shape[0] // batch_size,
                     callbacks = [learning_rate_reduction])
 
+# Saving model
+model.save("/drive/My Drive/keras-cnn-model")
+
 """## Model Evaluation"""
 
 # Plot loss curves and accuracy curves for training/val
@@ -185,3 +191,11 @@ legend = ax[0].legend(loc = 'best', shadow = True)
 ax[1].plot(history.history["accuracy"], color ='b', label = "Training accuracy")
 ax[1].plot(history.history["val_accuracy"], color= 'r',label = "Validation accuracy")
 legend = ax[1].legend(loc = "best", shadow = True)
+
+# Predict results8
+results = model.predict(test)
+results = np.argmax(results, axis = 1)
+results = pd.Series(results, name = "Label")
+
+submission = pd.concat([pd.Series(range(1, 28001), name = "ImageId"), results], axis = 1)
+submission.to_csv("/drive/My Drive/cnn_mnist_datagen-30-epochs.csv", index = False)
